@@ -8,6 +8,7 @@ on:
         required: true
         type: string
       branch:
+        description: 'Name of branch directory'
         required: true
         type: string
 

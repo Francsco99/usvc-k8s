@@ -1,6 +1,6 @@
 name: v1 Build branch
 
-run-name: Build ${{inputs.modulo}} on branch -> ${{inputs.branch}}
+run-name: Build ${{inputs.module}} on branch -> ${{inputs.branch}}
 
 on:
   workflow_dispatch:
