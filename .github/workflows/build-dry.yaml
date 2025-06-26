@@ -1,0 +1,23 @@
+name: v1 Build branch dry
+
+on:
+  workflow_call:
+    inputs:
+      module:
+        description: 'Name of module directory'
+        required: true
+        type: string
+      branch:
+        required: true
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{inputs.branch}}
