@@ -1,0 +1,39 @@
+name: v1 Build branch
+
+run-name: Build ${{inputs.modulo}} on branch -> ${{inputs.branch}}
+
+on:
+  workflow_dispatch:
+    inputs:
+      module:
+        description: "Choose which module to build"
+        required: true
+        type: choice
+        options:
+          - all-modules
+          - hello-service
+          - response-service
+      branch:
+        description: "Choose the branch"
+        required: true
+        type: string
+        default: develop
+      
+
+
+jobs:
+  build-single-module:
+    if: ${{ inputs.module != 'all-modules'}}
+    uses: ./.github/workflows/build-dry.yml
+    with:
+      module: ${{inputs.module}}
+      branch: ${{inputs.branch}}
+    secrets: inherit
+
+  build-all-modules:
+    if: ${{ inputs.module == 'all-modules'}}
+    uses: ./.github/workflows/build-dry.yml
+    with:
+      module: "."
+      branch: ${{inputs.branch}}
+    secrets: inherit
