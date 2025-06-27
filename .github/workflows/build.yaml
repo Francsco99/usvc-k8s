@@ -25,6 +25,9 @@ jobs:
   build-single-module:
     if: ${{ inputs.module != 'all-modules'}}
     uses: ./.github/workflows/build-dry.yaml
+    permissions:
+      contents: write
+      packages: write
     with:
       module: ${{inputs.module}}
       branch: ${{inputs.branch}}
@@ -33,6 +36,9 @@ jobs:
   build-all-modules:
     if: ${{ inputs.module == 'all-modules'}}
     uses: ./.github/workflows/build-dry.yaml
+    permissions:
+      contents: write
+      packages: write
     with:
       module: "."
       branch: ${{inputs.branch}}
