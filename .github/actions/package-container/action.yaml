@@ -1,29 +1,24 @@
 name: "Package Container"
 description: "Build and push Docker image"
-
 inputs:
   module:
     description: "Module folder"
+    required: true
+  image_registry:
+    description: "Target image registry"
     required: true
 
 runs:
   using: "composite"
   steps:
-    - name: Set image tag
-      id: vars
+    - name: Build and tag Docker image
       run: |
         OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
-        echo "tag=ghcr.io/${OWNER}/${{ inputs.module }}:latest" >> $GITHUB_OUTPUT
-      shell: bash
-
-    - name: Docker login to GHCR
-      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-      shell: bash
-
-    - name: Build Docker image
-      run: docker build -t ${{ steps.vars.outputs.tag }} ${{ inputs.module }}
+        docker build -t ghcr.io/${OWNER}/${{ inputs.module }}:latest ${{ inputs.module }}
       shell: bash
 
     - name: Push Docker image
-      run: docker push ${{ steps.vars.outputs.tag }}
+      run: |
+        echo "Pushing image ${{ inputs.image_registry }}:latest"
+        docker push ${{ inputs.image_registry }}:latest
       shell: bash
