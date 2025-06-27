@@ -31,6 +31,6 @@ runs:
         mvn -B clean deploy -DskipTests -s ${{ inputs.setting_maven }} -f ${{ inputs.module }}/pom.xml
       env: 
         GITHUB_TOKEN: ${{inputs.token}}
-        shell: bash
-        
+      shell: bash
+
         
