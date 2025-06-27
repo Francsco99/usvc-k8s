@@ -1,0 +1,33 @@
+name: v1 Packaging dry
+
+on:
+  workflow_call:
+    inputs:
+      module:
+        description: 'Name of module directory'
+        required: true
+        type: string
+      branch:
+        type: string
+        required: true
+
+jobs:
+  packaging:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{inputs.branch}}
+
+      - name: Docker login
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Build and push image
+        uses: ./.github/actions/package-container
+        with:
+          module: ${{ inputs.module }}
+          image_registry: ghcr.io/${{ github.repository_owner }}/${{ inputs.module }}

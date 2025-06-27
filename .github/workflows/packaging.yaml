@@ -1,0 +1,41 @@
+name: v1 Packaging application
+
+run-name: Containerization of ${{ inputs.module }} from branch ${{ inputs.branch }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      module:
+        description: "Choose which module to package"
+        required: true
+        type: choice
+        options:
+          - all-modules
+          - hello-service
+          - response-service
+      branch:
+        description: "Choose the branch"
+        required: true
+        type: string
+        default: main
+
+jobs:
+  packaging-single-module:
+    if: ${{ inputs.module != 'all-modules' }}
+    uses: ./.github/workflows/packaging-dry.yml
+    with:
+      module: ${{ inputs.module }}
+      branch: ${{ inputs.branch }}
+    secrets: inherit
+
+  packaging-all-modules:
+    if: ${{ inputs.module == 'all-modules' }}
+    strategy:
+      max-parallel: 2
+      matrix:
+        module: [ "hello-service", "response-service" ]
+    uses: ./.github/workflows/packaging-dry.yml
+    with:
+      module: ${{ matrix.module }}
+      branch: ${{ inputs.branch }}
+    secrets: inherit

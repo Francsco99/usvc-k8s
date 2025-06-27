@@ -1,0 +1,24 @@
+name: "Package Container"
+description: "Build and push Docker image"
+inputs:
+  module:
+    description: "Module folder"
+    required: true
+  image_registry:
+    description: "Target image registry"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Build Docker image
+      run: |
+        echo "Building Docker image for ${{ inputs.module }}"
+        docker build -t ${{ inputs.image_registry }}:latest ./${{ inputs.module }}
+      shell: bash
+
+    - name: Push Docker image
+      run: |
+        echo "Pushing image ${{ inputs.image_registry }}:latest"
+        docker push ${{ inputs.image_registry }}:latest
+      shell: bash
