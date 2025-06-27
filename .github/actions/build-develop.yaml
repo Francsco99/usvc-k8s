@@ -1,0 +1,36 @@
+name: "Build Develop"
+description: "Build Develop"
+inputs:
+  token:
+    description: "Github PAT"
+    required: true
+  module: 
+    description: "Module directory or . for all modules"
+    required: true
+  setting_maven:
+    description: "Path to Maven settings.xml"
+    required: true
+
+runs:
+  using: "composite"
+  steps: 
+    - name: Check Java and Maven verisions
+      run: |
+        java -version
+        mvn -v
+      shell: bash
+
+    - name: Show content of actions folder
+      run: |
+        ls -la
+      shell: bash
+    
+    - name: Build and deploy with Maven
+      run: |
+        echo "Building module: ${{inputs.module}}"
+        mvn -B clean deploy -DskipTests -s ${{ inputs.setting_maven }} -f ${{ inputs.module }}/pom.xml
+      env: 
+        GITHUB_TOKEN: ${{inputs.token}}
+      shell: bash
+
+        

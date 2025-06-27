@@ -1,0 +1,31 @@
+name: v1 Build branch dry
+
+on:
+  workflow_call:
+    inputs:
+      module:
+        description: 'Name of module directory'
+        required: true
+        type: string
+      branch:
+        description: 'Name of branch directory'
+        required: true
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{inputs.branch}}
+      
+      - name: Build with composite actions
+        uses: ./.github/actions/build-develop
+        with:
+          token: ${{secrets.GITHUB_TOKEN}}
+          module: ${{inputs.module}}
+          setting_maven: ".github/maven/settings.xml"
