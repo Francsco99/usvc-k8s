@@ -22,7 +22,7 @@ on:
 jobs:
   packaging-single-module:
     if: ${{ inputs.module != 'all-modules' }}
-    uses: ./.github/workflows/packaging-dry.yml
+    uses: ./.github/workflows/packaging-dry.yaml
     with:
       module: ${{ inputs.module }}
       branch: ${{ inputs.branch }}
@@ -34,7 +34,7 @@ jobs:
       max-parallel: 2
       matrix:
         module: [ "hello-service", "response-service" ]
-    uses: ./.github/workflows/packaging-dry.yml
+    uses: ./.github/workflows/packaging-dry.yaml
     with:
       module: ${{ matrix.module }}
       branch: ${{ inputs.branch }}
