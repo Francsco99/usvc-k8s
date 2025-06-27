@@ -24,7 +24,7 @@ on:
 jobs:
   build-single-module:
     if: ${{ inputs.module != 'all-modules'}}
-    uses: ./.github/workflows/build-dry.yml
+    uses: ./.github/workflows/build-dry.yaml
     with:
       module: ${{inputs.module}}
       branch: ${{inputs.branch}}
@@ -32,7 +32,7 @@ jobs:
 
   build-all-modules:
     if: ${{ inputs.module == 'all-modules'}}
-    uses: ./.github/workflows/build-dry.yml
+    uses: ./.github/workflows/build-dry.yaml
     with:
       module: "."
       branch: ${{inputs.branch}}
