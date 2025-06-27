@@ -17,7 +17,7 @@ on:
         description: "Choose the branch"
         required: true
         type: string
-        default: develop
+        default: main
       
 
 
