@@ -26,6 +26,6 @@ jobs:
       - name: Build with composite actions
         uses: ./.github/actions/build-develop
         with:
-          token: ${{GITHUB_TOKEN}}
+          token: ${{secrets.GITHUB_TOKEN}}
           module: ${{inputs.module}}
           setting_maven: ".github/maven/settings.xml"
