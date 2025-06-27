@@ -11,10 +11,10 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Build Docker image
+    - name: Build and tag Docker image
       run: |
-        echo "Building Docker image for ${{ inputs.module }}"
-        docker build -t ${{ inputs.image_registry }}:latest ./${{ inputs.module }}
+        OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+        docker build -t ghcr.io/${OWNER}/${{ inputs.module }}:latest ${{ inputs.module }}
       shell: bash
 
     - name: Push Docker image
