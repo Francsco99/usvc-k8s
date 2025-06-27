@@ -30,6 +30,7 @@ runs:
         echo "Building module: ${{inputs.module}}"
         mvn -B clean deploy -DskipTests -s ${{ inputs.setting_maven }} -f ${{ inputs.module }}/pom.xml
       env: 
+        GITHUB_ACTOR: ${{ github.actor }}
         GITHUB_TOKEN: ${{inputs.token}}
       shell: bash
 
