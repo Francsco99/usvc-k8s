@@ -23,6 +23,9 @@ jobs:
   packaging-single-module:
     if: ${{ inputs.module != 'all-modules' }}
     uses: ./.github/workflows/packaging-dry.yaml
+    permissions:
+      contents: read
+      packages: write
     with:
       module: ${{ inputs.module }}
       branch: ${{ inputs.branch }}
@@ -35,6 +38,9 @@ jobs:
       matrix:
         module: [ "hello-service", "response-service" ]
     uses: ./.github/workflows/packaging-dry.yaml
+    permissions:
+      contents: read
+      packages: write
     with:
       module: ${{ matrix.module }}
       branch: ${{ inputs.branch }}
