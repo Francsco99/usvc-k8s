@@ -1,11 +1,18 @@
-# Usa un'immagine base Java OpenJDK 17 slim
+# Use base image with JVM
 FROM eclipse-temurin:17-jdk-jammy
 
-# Copia il jar generato nella cartella /app/app.jar
-COPY target/*.jar /app/app.jar
+# Working directory
+WORKDIR /app
 
-# Esponi la porta 8080 (default Spring Boot)
+# Define build argument for JAR name
+ARG JAR_NAME
+ENV JAR_NAME=$JAR_NAME
+
+# Copy the JAR downloaded by the action into the container
+COPY ${JAR_NAME} /usr/app/${JAR_NAME}
+
+# Expose application port
 EXPOSE 8082
 
-# Comando per avviare l'app
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+# Entrypoint to run the JAR
+ENTRYPOINT exec java -jar $JAR_NAME
