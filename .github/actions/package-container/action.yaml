@@ -41,6 +41,12 @@ runs:
         version: ${{ inputs.version }}
         outputDirectory: ${{ inputs.module }}
         repository: https://maven.pkg.github.com/${{ inputs.repo }}
+    
+    - name: Debug
+      run: |
+        ls -la
+        ls -la ..
+      shell: bash
 
     - name: Show downloaded JAR
       run: ls -la ${{ inputs.module }}
