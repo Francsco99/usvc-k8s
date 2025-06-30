@@ -4,6 +4,12 @@ inputs:
   module:
     description: "Module name (and folder)"
     required: true
+  artifact_id:
+    description: "Artifact ID of the Maven JAR"
+    required: true
+  version:
+    description: "Artifact version"
+    required: true
   image_registry:
     description: "Target image registry"
     required: true
@@ -13,10 +19,6 @@ inputs:
   group_id:
     description: "Maven groupId"
     required: true
-  version:
-    description: "Artifact version (default: LATEST)"
-    required: false
-    default: "LATEST"
   github_token:
     description: "GitHub token for Maven download"
     required: true
@@ -35,7 +37,7 @@ runs:
       with:
         github-token: ${{ inputs.github_token }}
         groupID: ${{ inputs.group_id }}
-        artifactID: ${{ inputs.module }}
+        artifactID: ${{ inputs.artifact_id }}
         version: ${{ inputs.version }}
         outputDirectory: ${{ inputs.module }}
         repository: https://maven.pkg.github.com/${{ inputs.repo }}
