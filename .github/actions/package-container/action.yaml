@@ -80,13 +80,27 @@ runs:
         echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
       shell: bash
 
-    - name: Build Docker image
-      run: |
-        docker build \
-          --build-arg JAR_NAME=${{ env.JAR_NAME }} \
-          -t ${{ env.IMAGE_TAG }} \
-          ${{ inputs.module }}
-      shell: bash
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Log in to registry
+      uses: docker/login-action@v2
+      with:
+        registry: ${{ inputs.image_registry }}
+        username: ${{ github.actor }}
+        password: ${{ inputs.github_token }}
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: ${{ inputs.module }}
+        push: true
+        tags: ${{ env.IMAGE_TAG }}
+        build-args: |
+          JAR_NAME=${{ env.JAR_NAME }}
 
     - name: Show Docker images
       run: docker images
