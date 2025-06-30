@@ -49,8 +49,7 @@ runs:
     - name: Find JAR file
       id: find-jar
       run: |
-        JAR_NAME=$(basename $(find ${{ inputs.module }} -maxdepth 1 -name "${{ inputs.artifact_id }}*.jar"))
-        echo "JAR_NAME=$JAR_NAME" >> $GITHUB_ENV
+        echo "JAR_NAME=${{ inputs.artifactID }}-${{ inputs.version }}.jar" >> $GITHUB_ENV
       shell: bash
 
     - name: Pwd & Debug module directory
