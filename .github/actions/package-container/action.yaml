@@ -55,14 +55,14 @@ runs:
     - name: Find JAR file
       id: find-jar
       run: |
-        # Cerca QUALUNQUE jar nella cartella del modulo che inizi con artifact_id-
+        # Cerca il jar nella cartella
         FILE=$(find "${{ inputs.module }}" -maxdepth 1 -type f -name "${{ inputs.artifact_id }}-*.jar")
         if [[ -z "$FILE" ]]; then
-          echo "❌ Nessun JAR trovato in ${{ inputs.module }}"
+          echo "No jar found in ${{ inputs.module }}"
           exit 1
         fi
         JAR_NAME=$(basename "$FILE")
-        echo "→ Trovato JAR: $JAR_NAME"
+        echo "jar found: $JAR_NAME"
         echo "JAR_NAME=$JAR_NAME" >> $GITHUB_ENV
       shell: bash
 
