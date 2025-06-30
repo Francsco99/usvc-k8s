@@ -1,0 +1,41 @@
+name: "Download JAR from GitHub Maven"
+description: "Pull a JAR from GitHub Maven registry"
+
+inputs:
+  github-token:
+    description: "GitHub token to authenticate with the Maven registry"
+    required: true
+  groupID:
+    description: "Group ID of the artifact (e.g., com.example.service)"
+    required: true
+  artifactID:
+    description: "Artifact ID (name) of the JAR to download"
+    required: true
+  version:
+    description: "Version of the JAR to download (e.g., 1.0.0 or 1.0.0-SNAPSHOT)"
+    required: true
+  outputDirectory:
+    description: "Path to the local directory where the JAR should be saved"
+    required: true
+  repository:
+    description: "Full Maven repository URL (e.g., https://maven.pkg.github.com/org/repo)"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install Maven
+      run: sudo apt-get update && sudo apt-get install -y maven
+      shell: bash
+
+    - name: Download JAR
+      run: |
+        mkdir -p ${{ inputs.outputDirectory }}
+        mvn dependency:get \
+          -Dartifact=${{ inputs.groupID }}:${{ inputs.artifactID }}:${{ inputs.version }} \
+          -DremoteRepositories=${{ inputs.repository }} \
+          -Ddest=${{ inputs.outputDirectory }}/app.jar \
+          -Dtransitive=false
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+      shell: bash
