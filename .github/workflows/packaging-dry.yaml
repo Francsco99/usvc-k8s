@@ -31,3 +31,7 @@ jobs:
         with:
           module: ${{ inputs.module }}
           image_registry: ghcr.io/${{ github.repository_owner }}/${{ inputs.module }}
+          repo: ${{ github.repository }}
+          group_id: com.example 
+          version: LATEST
+          github_token: ${{ secrets.GITHUB_TOKEN }}
