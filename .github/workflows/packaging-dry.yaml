@@ -18,6 +18,10 @@ on:
       branch:
         type: string
         required: true
+      repository:
+        description: 'GitHub Maven repo in format <owner>/<repo>'
+        required: true
+        type: string
 
 jobs:
   packaging:
