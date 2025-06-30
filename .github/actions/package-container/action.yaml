@@ -42,6 +42,10 @@ runs:
         outputDirectory: ${{ inputs.module }}
         repository: https://maven.pkg.github.com/${{ inputs.repo }}
 
+    - name: Show downloaded JAR
+      run: ls -la ${{ inputs.module }}
+      shell: bash
+
     - name: Build Docker image
       run: |
         OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')

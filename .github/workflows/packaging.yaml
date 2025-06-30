@@ -31,6 +31,7 @@ jobs:
       artifact_id: ${{ inputs.module }}
       version: 0.0.1-SNAPSHOT
       branch: ${{ inputs.branch }}
+      repository: ${{ github.repository_owner }}/${{ inputs.module }}
     secrets: inherit
 
   packaging-all-modules:
@@ -44,8 +45,10 @@ jobs:
       contents: read
       packages: write
     with:
-      module: ${{ inputs.module }}
-      artifact_id: ${{ inputs.module }}
+      module: ${{ matrix.module }}
+      artifact_id: ${{ matrix.module }}
       version: 0.0.1-SNAPSHOT
       branch: ${{ inputs.branch }}
+      repository: ${{ github.repository_owner }}/${{ matrix.module }}
     secrets: inherit
+
