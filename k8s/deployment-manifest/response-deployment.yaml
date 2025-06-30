@@ -15,8 +15,6 @@ spec:
       labels:
         app: response-service
     spec:
-      imagePullSecrets:
-        - name: ghcr-secret
       containers:
         - name: response-service
           image: ghcr.io/francsco99/response-service:0.0.1-snapshot

@@ -15,8 +15,6 @@ spec:
       labels:
         app: hello-service
     spec:
-      imagePullSecrets:
-        - name: ghcr-secret
       containers:
         - name: hello-service
           image: ghcr.io/francsco99/hello-service:0.0.1-snapshot
