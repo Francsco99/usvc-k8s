@@ -35,4 +35,3 @@ jobs:
           group_id: com.example 
           version: LATEST
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ inputs.branch }}

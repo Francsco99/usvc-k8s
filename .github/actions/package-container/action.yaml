@@ -20,19 +20,18 @@ inputs:
   github_token:
     description: "GitHub token for Maven download"
     required: true
-  branch:
-    description: "Name of branch directory"
-    required: true
 
 runs:
   using: "composite"
   steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        ref: ${{inputs.branch}}
+    - name: Debug
+      run: |
+        ls -la
+        ls -la ..
+      shell: bash
+
     - name: Download JAR
-      uses: ./actions/jar-download
+      uses: ./.github/actions/jar-download
       with:
         github-token: ${{ inputs.github_token }}
         groupID: ${{ inputs.group_id }}
