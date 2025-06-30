@@ -31,7 +31,7 @@ jobs:
       artifact_id: ${{ inputs.module }}
       version: 0.0.1-SNAPSHOT
       branch: ${{ inputs.branch }}
-      repository: ${{ github.repository_owner }}/${{ inputs.module }}
+      repository: ${{ github.repository_owner }}/usvc-k8s
     secrets: inherit
 
   packaging-all-modules:
@@ -49,6 +49,6 @@ jobs:
       artifact_id: ${{ matrix.module }}
       version: 0.0.1-SNAPSHOT
       branch: ${{ inputs.branch }}
-      repository: ${{ github.repository_owner }}/${{ matrix.module }}
+      repository: ${{ github.repository_owner }}/usvc-k8s
     secrets: inherit
 
