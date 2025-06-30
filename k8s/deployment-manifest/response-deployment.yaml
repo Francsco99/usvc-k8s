@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: response-service
-          image: ghcr.io/francsco99/response-service:0.0.1-snapshot
+          image: ghcr.io/francsco99/response-service/response-service:0.0.1-snapshot
           ports:
             - containerPort: 8081
           # Resource requests and limits to avoid noisy neighbor issues

@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: hello-service
-          image: ghcr.io/francsco99/hello-service:0.0.1-snapshot
+          image: ghcr.io/francsco99/hello-service/hello-service:0.0.1-snapshot
           ports:
             - containerPort: 8081
           # Resource requests and limits to avoid noisy neighbor issues
