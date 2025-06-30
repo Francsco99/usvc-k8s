@@ -47,7 +47,7 @@ runs:
           -Dartifact=${{ inputs.groupID }}:${{ inputs.artifactID }}:${{ inputs.version }} \
           -DrepoUrl=${{ inputs.repository }} \
           -DrepositoryId=github \
-          -Ddest=${{ inputs.outputDirectory }}/app.jar \
+          --Ddest=${{ inputs.outputDirectory }}/${{ inputs.artifactID }}-${{ inputs.version }}.jar \
           -Dtransitive=false \
           -s ~/.m2/settings.xml
       shell: bash
