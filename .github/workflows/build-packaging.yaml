@@ -1,0 +1,38 @@
+name: v1 Build and packaging manually
+
+run-name: Build and packaging manually ${{ inputs.module }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      module:
+        description: "Chose to execute all-modules or a single module"
+        required: true
+        type: choice
+        options:
+          - all-modules
+          - hello-service
+          - response-service
+      branch:
+        description: "Choose the branch"
+        required: true
+        type: string
+        default: develop
+
+jobs:
+  build-packaging-all-modules:
+    if: ${{ inputs.module == 'all-modules' }}
+    uses: ./.github/workflows/build-packaging-dry.yml
+    with:
+      module: "."
+      branch: ${{inputs.branch}}
+    secrets: inherit
+
+  #This job will build the project and use directly the jar to push it to the artifactory, without pulling it from Github Packages
+  build-packaging-single-module:
+    if: ${{ inputs.module != 'all-modules' }}
+    uses: ./.github/workflows/build-packaging-dry.yml
+    with:
+      module: ${{ inputs.module }}
+      branch: ${{inputs.branch}}
+    secrets: inherit

@@ -1,0 +1,42 @@
+name: v1 Build Packaging dry
+
+on:
+  workflow_call:
+    inputs:
+      module:
+        description: 'Module directory name'
+        required: true
+        type: string
+      branch:
+        type: string
+        required: true
+
+jobs:
+  build:
+    uses: ./.github/workflows/build-dry.yml
+    with:
+      module: ${{ inputs.module }}
+      branch: ${{inputs.branch}}
+    secrets: inherit
+
+  packaging-all-modules:
+    needs: build
+    if: ${{ inputs.module == '.' || inputs.module == 'all-modules' }}
+    strategy:
+      max-parallel: 6
+      matrix:
+        module: [ "hello-service", "response-service" ]
+    uses: ./.github/workflows/packaging-dry.yml
+    with:
+      module: ${{ matrix.module }}
+      branch: ${{ inputs.branch }}
+    secrets: inherit
+
+  packaging-single-module:
+    needs: build
+    if: ${{ inputs.module != 'all-modules' && inputs.module != '.' }}
+    uses: ./.github/workflows/packaging-dry.yml
+    with:
+      module: ${{ inputs.module }}
+      branch: ${{inputs.branch}}
+    secrets: inherit
