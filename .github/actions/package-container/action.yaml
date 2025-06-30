@@ -46,12 +46,32 @@ runs:
       run: ls -la ${{ inputs.module }}
       shell: bash
 
-    - name: Build Docker image
+    - name: Find JAR file
+      id: find-jar
       run: |
-        OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
-        docker build -t ghcr.io/${OWNER}/${{ inputs.module }}:latest ${{ inputs.module }}
+        JAR_NAME=$(basename $(find ${{ inputs.module }} -maxdepth 1 -name "${{ inputs.artifact_id }}*.jar"))
+        echo "JAR_NAME=$JAR_NAME" >> $GITHUB_ENV
       shell: bash
 
-    - name: Push Docker image
-      run: docker push ${{ inputs.image_registry }}:latest
+    - name: Pwd & Debug module directory
+      run: |
+        pwd
+        ls -la ${{ inputs.module }}
+      shell: bash
+
+    - name: Create image tag
+      run: |
+        echo "IMAGE_TAG=${{ inputs.image_registry }}/${{ inputs.module }}:${{ inputs.version }}" >> $GITHUB_ENV
+      shell: bash
+
+    - name: Build Docker image
+      run: |
+        docker build \
+          --build-arg JAR_NAME=${{ env.JAR_NAME }} \
+          -t ${{ env.IMAGE_TAG }} \
+          ${{ inputs.module }}
+      shell: bash
+
+    - name: Show Docker images
+      run: docker images
       shell: bash
