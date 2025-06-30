@@ -42,5 +42,19 @@
         </repository>
     </distributionManagement>
 
+    <repositories>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages (snapshots)</name>
+            <url>https://maven.pkg.github.com/Francsco99/usvc-k8s</url>
+            <snapshots>
+            <enabled>true</enabled>
+            </snapshots>
+            <releases>
+            <enabled>false</enabled>
+            </releases>
+        </repository>
+    </repositories>
+
 </project>
 
