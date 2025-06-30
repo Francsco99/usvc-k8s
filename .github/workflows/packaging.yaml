@@ -28,6 +28,8 @@ jobs:
       packages: write
     with:
       module: ${{ inputs.module }}
+      artifact_id: ${{ inputs.module }}
+      version: 0.0.1-SNAPSHOT
       branch: ${{ inputs.branch }}
     secrets: inherit
 
@@ -42,6 +44,8 @@ jobs:
       contents: read
       packages: write
     with:
-      module: ${{ matrix.module }}
+      module: ${{ inputs.module }}
+      artifact_id: ${{ inputs.module }}
+      version: 0.0.1-SNAPSHOT
       branch: ${{ inputs.branch }}
     secrets: inherit
