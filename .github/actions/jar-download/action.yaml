@@ -38,6 +38,9 @@ runs:
         GITHUB_TOKEN: ${{ inputs.github-token }}
 
     - name: Download JAR from GitHub Packages
+      env:
+        GITHUB_ACTOR: ${{ github.actor }}
+        GITHUB_TOKEN: ${{ inputs.github-token }}
       run: |
         mkdir -p ${{ inputs.outputDirectory }}
         mvn dependency:get \
