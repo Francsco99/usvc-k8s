@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: response-service
+  namespace: deployment-k8s-manifest
+  labels:
+    app: response-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: response-service
+  template:
+    metadata:
+      labels:
+        app: response-service
+    spec:
+      containers:
+        - name: response-service
+          image: ghcr.io/francsco99/response-service:0.0.1-snapshot
+          ports:
+            - containerPort: 8081
+          # Resource requests and limits to avoid noisy neighbor issues
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "200m"
+              memory: "256Mi"
