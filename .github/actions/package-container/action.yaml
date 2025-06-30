@@ -49,7 +49,7 @@ runs:
     - name: Find JAR file
       id: find-jar
       run: |
-        echo "JAR_NAME=${{ inputs.artifactID }}-${{ inputs.version }}.jar" >> $GITHUB_ENV
+        echo "JAR_NAME=${{ inputs.artifact_id }}-${{ inputs.version }}.jar" >> $GITHUB_ENV
       shell: bash
 
     - name: Pwd & Debug module directory
