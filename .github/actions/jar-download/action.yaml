@@ -37,17 +37,16 @@ runs:
         GITHUB_ACTOR: ${{ github.actor }}
         GITHUB_TOKEN: ${{ inputs.github-token }}
 
-    - name: Download JAR from GitHub Packages
-      env:
-        GITHUB_ACTOR: ${{ github.actor }}
-        GITHUB_TOKEN: ${{ inputs.github-token }}
+    - name: Download JAR using copy goal
       run: |
         mkdir -p ${{ inputs.outputDirectory }}
-        mvn dependency:get \
+        mvn org.apache.maven.plugins:maven-dependency-plugin:3.6.1:copy \
           -Dartifact=${{ inputs.groupID }}:${{ inputs.artifactID }}:${{ inputs.version }} \
-          -DrepoUrl=${{ inputs.repository }} \
-          -DrepositoryId=github \
-          -Ddest=${{ inputs.outputDirectory }} \
+          -DoutputDirectory=${{ inputs.outputDirectory }} \
+          -DremoteRepositories=github::default::${{ inputs.repository }} \
           -Dtransitive=false \
           -s ~/.m2/settings.xml
       shell: bash
+      env:
+        GITHUB_ACTOR: ${{ github.actor }}
+        GITHUB_TOKEN: ${{ inputs.github-token }}
