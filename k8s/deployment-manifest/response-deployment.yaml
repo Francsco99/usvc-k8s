@@ -21,7 +21,7 @@ spec:
           image: ghcr.io/francsco99/response-service/response-service:0.0.1-snapshot
           ports:
             - name: http
-              containerPort: 8080
+              containerPort: 8082
           resources:
             requests:
               cpu: "100m"
