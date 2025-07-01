@@ -9,7 +9,7 @@ ARG JAR_NAME
 ENV JAR_NAME=$JAR_NAME
 
 # Copy the JAR downloaded by the action into the container
-COPY ${JAR_NAME} /usr/app/${JAR_NAME}
+COPY ${JAR_NAME} /.
 
 # Expose application port
 EXPOSE 8082
