@@ -21,7 +21,7 @@ spec:
           image: ghcr.io/francsco99/hello-service/hello-service:0.0.1-snapshot
           env:
             - name: RESPONSE_SERVICE_URL
-              value: "http://response-service:8082"
+              value: "http://response-service"
           ports:
             - name: http
               containerPort: 8080
