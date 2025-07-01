@@ -19,8 +19,12 @@ spec:
         - name: hello-service
           imagePullPolicy: Always
           image: ghcr.io/francsco99/hello-service/hello-service:0.0.1-snapshot
+          env:
+            - name: RESPONSE_SERVICE_URL
+              value: "http://response-service:8080"
           ports:
-            - containerPort: 8081
+            - name: http
+              containerPort: 8080
           # Resource requests and limits to avoid noisy neighbor issues
           resources:
             requests:

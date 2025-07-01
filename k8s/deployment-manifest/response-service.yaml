@@ -8,6 +8,7 @@ spec:
   selector:
     app: response-service
   ports:
-    - port: 8081
-      targetPort: 8081
-      nodePort: 30082
+    - name: http
+      port:       80      # porta interna del Service
+      targetPort: http   # mappa al containerPort 8080
+      nodePort:   30082  # porta su cui esporre dal nodo
