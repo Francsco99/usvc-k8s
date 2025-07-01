@@ -11,8 +11,5 @@ ENV JAR_NAME=$JAR_NAME
 # Copy the JAR downloaded by the action into the container
 COPY ${JAR_NAME} ./
 
-# Expose application port
-EXPOSE 8081
-
 # Entrypoint to run the JAR
 ENTRYPOINT exec java -jar $JAR_NAME
