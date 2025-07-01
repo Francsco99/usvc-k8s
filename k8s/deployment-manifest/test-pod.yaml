@@ -5,8 +5,8 @@ metadata:
   namespace: deployment-k8s-manifest
 spec:
   containers:
-    - name: busybox
-      image: busybox:latest
+    - name: netshoot
+      image: nicolaka/netshoot:latest
       command: ["sleep", "3600"]
       # Resource requests and limits to avoid noisy neighbor issues
       resources:
@@ -17,3 +17,4 @@ spec:
           cpu: "100m"
           memory: "128Mi"
   restartPolicy: OnFailure
+
