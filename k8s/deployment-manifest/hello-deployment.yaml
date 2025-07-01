@@ -17,6 +17,7 @@ spec:
     spec:
       containers:
         - name: hello-service
+          imagePullPolicy: Always
           image: ghcr.io/francsco99/hello-service/hello-service:0.0.1-snapshot
           ports:
             - containerPort: 8081
