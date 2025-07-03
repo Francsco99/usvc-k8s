@@ -13,7 +13,7 @@ service:
 
 env:
   - name: RESPONSE_SERVICE_URL
-    value: "http://response-service"
+    value: "http://response-service.deployment-k8s-manifest" # oppure http://response-spring-helm-chart
 
 resources:
   requests:
