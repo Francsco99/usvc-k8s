@@ -33,8 +33,10 @@ runs:
       run: |
         POM="${{ inputs.module }}/pom.xml"
 
-        # Leggi versione corrente
-        OLD=$(xmllint --xpath "/*[local-name()='project']/*[local-name()='version']/text()" "$POM")
+        # Usa Maven per leggere la versione corrente
+        OLD=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout -f "$POM")
+
+        echo "Versione corrente: $OLD"
 
         IFS='.' read -r MAJOR MINOR PATCH <<< "$OLD"
 
@@ -49,7 +51,7 @@ runs:
 
         echo "Old version: $OLD → New version: $NEW"
 
-        mvn versions:set -DnewVersion=$NEW -f $POM
+        mvn versions:set -DnewVersion=$NEW -f "$POM"
 
         echo "NEW_VERSION=$NEW" >> $GITHUB_ENV
       shell: bash
