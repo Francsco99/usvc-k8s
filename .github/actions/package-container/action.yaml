@@ -16,6 +16,9 @@ inputs:
   image_registry:
     description: "Target image registry"
     required: true
+  image_name:
+    description: "Name of the Docker image"
+    required: true
   repo:
     description: "GitHub repo in format <owner>/<repo>"
     required: true
@@ -75,7 +78,7 @@ runs:
 
     - name: Create image tag (lowercase)
       run: |
-        RAW_TAG="${{ inputs.image_registry }}:${{ inputs.version }}"
+        RAW_TAG="${{ inputs.image_registry }}/${{ inputs.module }}:${{ inputs.version }}"
         IMAGE_TAG=$(echo "$RAW_TAG" | tr '[:upper:]' '[:lower:]')
 
         RAW_LATEST="${{ inputs.image_registry }}:latest"

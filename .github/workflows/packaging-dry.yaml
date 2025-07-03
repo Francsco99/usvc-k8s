@@ -53,5 +53,6 @@ jobs:
           version: ${{ env.FINAL_VERSION }}
           group_id: com.example
           image_registry: ghcr.io/${{ github.repository_owner }}
+          image_name: ${{ inputs.module }}
           repo: Francsco99/usvc-k8s
           github_token: ${{ secrets.GITHUB_TOKEN }}
