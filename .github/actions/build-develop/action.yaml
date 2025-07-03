@@ -51,7 +51,7 @@ runs:
 
         echo "Old version: $OLD → New version: $NEW"
 
-        mvn versions:set -DnewVersion=$NEW -f "$POM"
+        mvn versions:set -DnewVersion=$NEW -DgenerateBackupPoms=false -f "$POM"
 
         echo "NEW_VERSION=$NEW" >> $GITHUB_ENV
       shell: bash
@@ -64,5 +64,16 @@ runs:
         GITHUB_ACTOR: ${{ github.actor }}
         GITHUB_TOKEN: ${{inputs.token}}
       shell: bash
+    
+    - name: Commit bumped version
+      run: |
+        git config user.name  "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git add ${{ inputs.module }}/pom.xml
+        git commit -m "chore: bump version to ${{ env.NEW_VERSION }}"
+        git push origin ${{ inputs.branch }}
+      shell: bash
+
+    
 
         
