@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-pod
+  namespace: deployment-k8s-manifest
+  labels:
+    app: test-pod
+spec:
+  selector:
+    matchLabels:
+      app: test-pod
+  template:
+    metadata:
+      labels:
+        app: test-pod
+    spec:
+      containers:
+        - name: test-pod
+          image: nicolaka/netshoot:latest
+          # Resource requests and limits to avoid noisy neighbor issues
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "200m"
+              memory: "256Mi"
