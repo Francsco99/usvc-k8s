@@ -17,6 +17,7 @@ spec:
       containers:
         - name: test-pod
           image: nicolaka/netshoot:latest
+          command: ["sleep", "3600"]
           # Resource requests and limits to avoid noisy neighbor issues
           resources:
             requests:
