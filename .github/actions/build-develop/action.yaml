@@ -16,7 +16,7 @@ inputs:
 
 runs:
   using: "composite"
-  steps: 
+  steps:
     - name: Check Java and Maven verisions
       run: |
         java -version
@@ -24,55 +24,49 @@ runs:
       shell: bash
 
     - name: Show content of actions folder
-      run: |
-        ls -la
+      run: ls -la
       shell: bash
 
-    - name: Bump version with Maven
+    - name: Bump parent + child versions
       id: bump
       run: |
-        POM="${{ inputs.module }}/pom.xml"
-
-        # Usa Maven per leggere la versione corrente
-        OLD=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout -f "$POM")
-
-        echo "Versione corrente: $OLD"
-
+        OLD=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout -f ./pom.xml)
         IFS='.' read -r MAJOR MINOR PATCH <<< "$OLD"
-
         case "${{ inputs.bump }}" in
           major) MAJOR=$((MAJOR+1)); MINOR=0; PATCH=0 ;;
           minor) MINOR=$((MINOR+1)); PATCH=0 ;;
           patch) PATCH=$((PATCH+1)) ;;
-          *) echo "Errore: bump deve essere major, minor o patch"; exit 1 ;;
         esac
-
         NEW="$MAJOR.$MINOR.$PATCH"
-
-        echo "Old version: $OLD → New version: $NEW"
-
-        mvn versions:set -DnewVersion=$NEW -DgenerateBackupPoms=false -f "$POM"
-
+        mvn versions:set -DnewVersion=$NEW -DgenerateBackupPoms=false -f ./pom.xml
+        mvn versions:update-child-modules -DgenerateBackupPoms=false -f ./pom.xml
         echo "NEW_VERSION=$NEW" >> $GITHUB_ENV
       shell: bash
-    
-    - name: Build and deploy with Maven
-      run: |
-        echo "Building module: ${{inputs.module}}"
-        mvn -B clean deploy -DskipTests -s ${{ inputs.setting_maven }} -f ${{ inputs.module }}/pom.xml
-      env: 
-        GITHUB_ACTOR: ${{ github.actor }}
-        GITHUB_TOKEN: ${{inputs.token}}
-      shell: bash
-    
+
     - name: Commit bumped version
       run: |
         git config user.name  "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
-        git add ${{ inputs.module }}/pom.xml
+
+        if [ "${{ inputs.module }}" = "." ]; then
+          git add pom.xml hello-service/pom.xml response-service/pom.xml
+        else
+          git add ${{ inputs.module }}/pom.xml
+        fi
+
         git commit -m "chore: bump version to ${{ env.NEW_VERSION }}"
         git push origin ${{ inputs.branch }}
       shell: bash
+
+    - name: Build and deploy with Maven
+      run: |
+        echo "Building module: ${{inputs.module}}"
+        mvn -B clean deploy -DskipTests -s ${{ inputs.setting_maven }} -f ${{ inputs.module }}/pom.xml
+      env:
+        GITHUB_ACTOR: ${{ github.actor }}
+        GITHUB_TOKEN: ${{inputs.token}}
+      shell: bash
+
 
     
 
