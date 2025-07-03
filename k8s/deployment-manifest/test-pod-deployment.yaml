@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: test-pod
-  namespace: deployment-k8s-manifest
+  namespace: deployment-flux-manifest
   labels:
     app: test-pod
 spec:
