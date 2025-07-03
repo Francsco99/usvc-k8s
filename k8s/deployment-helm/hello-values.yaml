@@ -1,0 +1,52 @@
+replicaCount: 2
+
+image:
+  repository: ghcr.io/francsco99/hello-service/hello-service
+  tag: "0.0.1-snapshot"
+  pullPolicy: Always
+
+service:
+  type: NodePort
+  port: 80
+  targetPort: 8080
+  nodePort: 30081
+
+containerPort: 8080
+
+env:
+  - name: RESPONSE_SERVICE_URL
+    value: "http://response-service"
+
+resources:
+  requests:
+    cpu: "100m"
+    memory: "128Mi"
+  limits:
+    cpu: "200m"
+    memory: "256Mi"
+
+namespace: deployment-k8s-helm
+
+serviceAccount:
+  create: true
+  name: ""  # Se lasci vuoto, Helm userà il fullname del chart
+  imagePullSecrets:
+    - name: ghcr-secret
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: null
