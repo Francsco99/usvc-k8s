@@ -11,6 +11,10 @@ on:
         description: 'Name of branch directory'
         required: true
         type: string
+      bump:
+        description: 'Type of bump: major, minor, patch'
+        required: true
+        type: string
 
 jobs:
   build:
@@ -29,4 +33,5 @@ jobs:
         with:
           token: ${{secrets.GITHUB_TOKEN}}
           module: ${{inputs.module}}
+          bump: ${{inputs.bump}}
           setting_maven: ".github/maven/settings.xml"

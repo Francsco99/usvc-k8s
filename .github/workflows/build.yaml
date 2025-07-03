@@ -18,8 +18,15 @@ on:
         required: true
         type: string
         default: main
-      
-
+      bump:
+        description: "Type of bump: major, minor, patch"
+        required: true
+        type: choice
+        options:
+          - major
+          - minor
+          - patch
+        default: patch
 
 jobs:
   build-single-module:
@@ -31,6 +38,7 @@ jobs:
     with:
       module: ${{inputs.module}}
       branch: ${{inputs.branch}}
+      bump: ${{inputs.bump}}
     secrets: inherit
 
   build-all-modules:
@@ -42,4 +50,5 @@ jobs:
     with:
       module: "."
       branch: ${{inputs.branch}}
+      bump: ${{inputs.bump}}
     secrets: inherit
