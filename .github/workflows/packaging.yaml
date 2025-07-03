@@ -51,4 +51,3 @@ jobs:
       branch: ${{ inputs.branch }}
       repository: ${{ github.repository_owner }}/usvc-k8s
     secrets: inherit
-

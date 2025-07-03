@@ -10,14 +10,14 @@ inputs:
   version:
     description: "Artifact version"
     required: true
+  group_id:
+    description: "Maven groupId"
+    required: true
   image_registry:
     description: "Target image registry"
     required: true
   repo:
     description: "GitHub repo in format <owner>/<repo>"
-    required: true
-  group_id:
-    description: "Maven groupId"
     required: true
   github_token:
     description: "GitHub token for Maven download"
@@ -75,9 +75,14 @@ runs:
 
     - name: Create image tag (lowercase)
       run: |
-        RAW_TAG="${{ inputs.image_registry }}/${{ inputs.module }}:${{ inputs.version }}"
+        RAW_TAG="${{ inputs.image_registry }}:${{ inputs.version }}"
         IMAGE_TAG=$(echo "$RAW_TAG" | tr '[:upper:]' '[:lower:]')
+
+        RAW_LATEST="${{ inputs.image_registry }}:latest"
+        LATEST_TAG=$(echo "$RAW_LATEST" | tr '[:upper:]' '[:lower:]')
+        
         echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+        echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
       shell: bash
 
     - name: Set up QEMU
@@ -98,7 +103,9 @@ runs:
       with:
         context: ${{ inputs.module }}
         push: true
-        tags: ${{ env.IMAGE_TAG }}
+        tags: | 
+          ${{ env.IMAGE_TAG }}
+          ${{ env.LATEST_TAG }}
         build-args: |
           JAR_NAME=${{ env.JAR_NAME }}
 
