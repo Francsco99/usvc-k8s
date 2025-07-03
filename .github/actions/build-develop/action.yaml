@@ -10,6 +10,9 @@ inputs:
   setting_maven:
     description: "Path to Maven settings.xml"
     required: true
+  bump:
+    description: "Type of bump: major, minor, patch"
+    required: true
 
 runs:
   using: "composite"
