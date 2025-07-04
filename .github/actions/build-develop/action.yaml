@@ -29,14 +29,12 @@ runs:
 
     - name: Bump version
       run: |
-        # Determina quale pom usare
         if [ "${{ inputs.module }}" = "." ]; then
           POM="./pom.xml"
         else
           POM="${{ inputs.module }}/pom.xml"
         fi
 
-        # Leggi la versione corrente
         OLD=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout -f "$POM" | grep -E '^[0-9]')
         IFS='.' read -r MAJOR MINOR PATCH <<< "$OLD"
 
@@ -47,10 +45,15 @@ runs:
           *) echo "Invalid bump"; exit 1 ;;
         esac
 
-        NEW="$MAJOR.$MINOR.$PATCH"
+        # LOGICA SNAPSHOT
+        if [ "${{ inputs.module }}" = "." ]; then
+          NEW="$MAJOR.$MINOR.$PATCH"
+        else
+          NEW="$MAJOR.$MINOR.$PATCH-SNAPSHOT"
+        fi
+
         echo "Bumping to: $NEW"
 
-        # Logica bump
         if [ "${{ inputs.module }}" = "." ]; then
           mvn versions:set -DnewVersion=$NEW -DgenerateBackupPoms=false -f ./pom.xml
           mvn versions:update-child-modules -DgenerateBackupPoms=false -f ./pom.xml
@@ -59,7 +62,6 @@ runs:
         fi
 
         echo "NEW_VERSION=$NEW" >> $GITHUB_ENV
-
       shell: bash
 
     - name: Commit bumped version
@@ -76,6 +78,7 @@ runs:
         git commit -m "chore: bump version to ${{ env.NEW_VERSION }}"
         git push origin ${{ inputs.branch }}
       shell: bash
+
 
     - name: Build and deploy with Maven
       run: |
