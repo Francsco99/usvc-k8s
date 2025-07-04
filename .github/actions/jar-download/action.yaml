@@ -1,34 +1,37 @@
 name: "Download JAR from GitHub Maven"
-description: "Pull a JAR from GitHub Maven registry"
+description: "Download a JAR artifact from GitHub Maven registry"
 
 inputs:
   github-token:
-    description: "GitHub token to access the Maven registry"
+    description: "GitHub token to authenticate with the Maven registry"
     required: true
   groupID:
-    description: "Group ID of the JAR"
+    description: "Group ID of the Maven artifact"
     required: true
   artifactID:
-    description: "Artifact ID of the JAR"
+    description: "Artifact ID of the Maven artifact"
     required: true
   version:
-    description: "Version of the JAR"
+    description: "Version of the Maven artifact"
     required: true
   outputDirectory:
-    description: "Target directory where to save the JAR"
+    description: "Local directory to save the downloaded JAR"
     required: true
   repository:
-    description: "GitHub Maven repository URL"
+    description: "Full GitHub Maven repository URL"
     required: true
 
 runs:
   using: "composite"
   steps:
-    - name: Install Maven
-      run: sudo apt-get update && sudo apt-get install -y maven
+    - name: Install Maven CLI
+      id: install-maven
+      run: |
+        sudo apt-get update && sudo apt-get install -y maven
       shell: bash
 
-    - name: Setup Maven settings.xml
+    - name: Configure Maven authentication
+      id: setup-maven-settings
       run: |
         mkdir -p ~/.m2
         cp $GITHUB_WORKSPACE/.github/maven/settings.xml ~/.m2/settings.xml
@@ -37,7 +40,8 @@ runs:
         GITHUB_ACTOR: ${{ github.actor }}
         GITHUB_TOKEN: ${{ inputs.github-token }}
 
-    - name: Download JAR using copy goal
+    - name: Download JAR with Maven dependency plugin
+      id: download-jar
       run: |
         mkdir -p ${{ inputs.outputDirectory }}
         mvn org.apache.maven.plugins:maven-dependency-plugin:3.6.1:copy \

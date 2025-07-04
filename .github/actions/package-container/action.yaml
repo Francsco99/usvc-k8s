@@ -1,14 +1,12 @@
 name: "Package Container"
 description: "Download JAR and Build & Push Docker image"
+
 inputs:
   module:
     description: "Module name (and folder)"
     required: true
   artifact_id:
     description: "Artifact ID of the Maven JAR"
-    required: true
-  version:
-    description: "Artifact version"
     required: true
   group_id:
     description: "Maven groupId"
@@ -19,7 +17,7 @@ inputs:
   image_name:
     description: "Name of the Docker image"
     required: true
-  repo:
+  repository:
     description: "GitHub repo in format <owner>/<repo>"
     required: true
   github_token:
@@ -29,72 +27,93 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Debug
+    - name: Debug working directory
+      id: debug-working-dir
       run: |
         ls -la
         ls -la ..
       shell: bash
 
-    - name: Download JAR
+    - name: Extract version from pom.xml
+      id: extract-version
+      run: |
+        POM="${{ inputs.module }}/pom.xml"
+        VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout -f "$POM")
+        echo "Extracted version: $VERSION"
+        echo "FINAL_VERSION=$VERSION" >> $GITHUB_ENV
+      shell: bash
+
+    - name: Download Maven artifact (JAR)
+      id: download-jar
       uses: ./.github/actions/jar-download
       with:
         github-token: ${{ inputs.github_token }}
         groupID: ${{ inputs.group_id }}
         artifactID: ${{ inputs.artifact_id }}
-        version: ${{ inputs.version }}
+        version: ${{ env.FINAL_VERSION }}
         outputDirectory: ${{ inputs.module }}
-        repository: https://maven.pkg.github.com/${{ inputs.repo }}
+        repository: https://maven.pkg.github.com/${{ inputs.repository }}
     
-    - name: Debug
+    - name: Debug after JAR download
+      id: debug-after-download
       run: |
         ls -la
         ls -la ..
       shell: bash
 
-    - name: Show downloaded JAR
-      run: ls -la ${{ inputs.module }}
+    - name: List files in module directory
+      id: list-module-dir
+      run: |
+        ls -la ${{ inputs.module }}
       shell: bash
 
-    - name: Find JAR file
+    - name: Find downloaded JAR file
       id: find-jar
       run: |
-        # Cerca il jar nella cartella
+        # Find the JAR in the module folder
         FILE=$(find "${{ inputs.module }}" -maxdepth 1 -type f -name "${{ inputs.artifact_id }}-*.jar")
         if [[ -z "$FILE" ]]; then
-          echo "No jar found in ${{ inputs.module }}"
+          echo "No JAR found in ${{ inputs.module }}"
           exit 1
         fi
         JAR_NAME=$(basename "$FILE")
-        echo "jar found: $JAR_NAME"
+        echo "JAR found: $JAR_NAME"
         echo "JAR_NAME=$JAR_NAME" >> $GITHUB_ENV
       shell: bash
 
-
-    - name: Pwd & Debug module directory
+    - name: Show module working directory
+      id: debug-module-dir
       run: |
         pwd
         ls -la ${{ inputs.module }}
       shell: bash
 
-    - name: Create image tag (lowercase)
+    - name: Generate Docker image tags
+      id: generate-tags
       run: |
-        RAW_TAG="${{ inputs.image_registry }}/${{ inputs.module }}:${{ inputs.version }}"
-        IMAGE_TAG=$(echo "$RAW_TAG" | tr '[:upper:]' '[:lower:]')
+        VERSION_TAG="${{ inputs.image_registry }}/${{ inputs.image_name }}:${{ env.FINAL_VERSION }}"
+        IMAGE_TAG=$(echo "$VERSION_TAG" | tr '[:upper:]' '[:lower:]')
 
-        RAW_LATEST="${{ inputs.image_registry }}/${{ inputs.module }}:latest"
-        LATEST_TAG=$(echo "$RAW_LATEST" | tr '[:upper:]' '[:lower:]')
+        LATEST_TAG="${{ inputs.image_registry }}/${{ inputs.image_name }}:latest"
+        LATEST_TAG=$(echo "$LATEST_TAG" | tr '[:upper:]' '[:lower:]')
+
+        echo "IMAGE_TAG=$IMAGE_TAG"
+        echo "LATEST_TAG=$LATEST_TAG"
         
         echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
         echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
       shell: bash
 
     - name: Set up QEMU
+      id: setup-qemu
       uses: docker/setup-qemu-action@v2
 
     - name: Set up Docker Buildx
+      id: setup-buildx
       uses: docker/setup-buildx-action@v2
 
-    - name: Log in to registry
+    - name: Authenticate Docker registry
+      id: docker-login
       uses: docker/login-action@v2
       with:
         registry: ${{ inputs.image_registry }}
@@ -102,6 +121,7 @@ runs:
         password: ${{ inputs.github_token }}
 
     - name: Build and push Docker image
+      id: build-push-image
       uses: docker/build-push-action@v5
       with:
         context: ${{ inputs.module }}
@@ -112,6 +132,7 @@ runs:
         build-args: |
           JAR_NAME=${{ env.JAR_NAME }}
 
-    - name: Show Docker images
+    - name: Show local Docker images
+      id: show-docker-images
       run: docker images
       shell: bash

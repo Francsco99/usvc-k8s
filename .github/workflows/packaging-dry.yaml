@@ -1,23 +1,20 @@
-name: v1 Packaging dry
+name: v1 Packaging Dry
 
 on:
   workflow_call:
     inputs:
       module:
-        description: 'Name of module directory'
+        description: 'Name of the module directory'
         required: true
         type: string
       artifact_id:
         description: 'Artifact ID of the JAR'
         required: true
         type: string
-      version:
-        description: 'Version of the artifact'
-        required: true
-        type: string
       branch:
-        type: string
+        description: 'Git branch to package'
         required: true
+        type: string
       repository:
         description: 'GitHub Maven repo in format <owner>/<repo>'
         required: true
@@ -29,30 +26,28 @@ jobs:
     permissions:
       contents: read
       packages: write
-    env:
-      FINAL_VERSION: ${{ inputs.version }}
 
     steps:
-      - name: Checkout code
+      - name: Checkout source code
+        id: checkout-code
         uses: actions/checkout@v4
         with:
           ref: ${{ inputs.branch }}
 
-      - name: Docker login
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: Authenticate Docker registry
+        id: docker-login
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | \
+          docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-      - name: Extract version from Git tag
-        if: startsWith(github.ref, 'refs/tags/')
-        run: echo "FINAL_VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
-
-      - name: Build and push image
+      - name: Run Package Container Action
+        id: run-package-container
         uses: ./.github/actions/package-container
         with:
           module: ${{ inputs.module }}
           artifact_id: ${{ inputs.artifact_id }}
-          version: ${{ env.FINAL_VERSION }}
           group_id: com.example
           image_registry: ghcr.io/${{ github.repository_owner }}
           image_name: ${{ inputs.module }}
-          repo: Francsco99/usvc-k8s
+          repository: ${{ inputs.repository }}
           github_token: ${{ secrets.GITHUB_TOKEN }}

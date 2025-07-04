@@ -1,4 +1,4 @@
-name: v1 Packaging application
+name: v1 Packaging Application
 
 run-name: Containerization of ${{ inputs.module }} from branch ${{ inputs.branch }}
 
@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       module:
-        description: "Choose which module to package"
+        description: "Select which module to package"
         required: true
         type: choice
         options:
@@ -14,13 +14,17 @@ on:
           - hello-service
           - response-service
       branch:
-        description: "Choose the branch"
+        description: "Git branch to use for packaging"
         required: true
         type: string
         default: main
 
+env:
+  REPO: ${{ github.repository_owner }}/usvc-k8s
+
 jobs:
   packaging-single-module:
+    name: Package single module
     if: ${{ inputs.module != 'all-modules' }}
     uses: ./.github/workflows/packaging-dry.yaml
     permissions:
@@ -29,12 +33,12 @@ jobs:
     with:
       module: ${{ inputs.module }}
       artifact_id: ${{ inputs.module }}
-      version: 0.0.1-SNAPSHOT
       branch: ${{ inputs.branch }}
-      repository: ${{ github.repository_owner }}/usvc-k8s
+      repository: ${{ env.REPO }}
     secrets: inherit
 
   packaging-all-modules:
+    name: Package all modules
     if: ${{ inputs.module == 'all-modules' }}
     strategy:
       max-parallel: 2
@@ -47,7 +51,6 @@ jobs:
     with:
       module: ${{ matrix.module }}
       artifact_id: ${{ matrix.module }}
-      version: 0.0.1-SNAPSHOT
       branch: ${{ inputs.branch }}
-      repository: ${{ github.repository_owner }}/usvc-k8s
+      repository: ${{ env.REPO }}
     secrets: inherit
