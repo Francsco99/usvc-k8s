@@ -17,7 +17,7 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Check Java and Maven verisions
+    - name: Check Java and Maven versions
       run: |
         java -version
         mvn -v
@@ -29,19 +29,34 @@ runs:
 
     - name: Bump version
       run: |
-        OLD=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout -f ./pom.xml | grep -E '^[0-9]')
+        # Determina quale pom usare
+        if [ "${{ inputs.module }}" = "." ]; then
+          POM="./pom.xml"
+        else
+          POM="${{ inputs.module }}/pom.xml"
+        fi
+
+        # Leggi la versione corrente
+        OLD=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout -f "$POM" | grep -E '^[0-9]')
         IFS='.' read -r MAJOR MINOR PATCH <<< "$OLD"
+
         case "${{ inputs.bump }}" in
           major) MAJOR=$((MAJOR+1)); MINOR=0; PATCH=0 ;;
           minor) MINOR=$((MINOR+1)); PATCH=0 ;;
           patch) PATCH=$((PATCH+1)) ;;
           *) echo "Invalid bump"; exit 1 ;;
         esac
-        NEW="$MAJOR.$MINOR.$PATCH"
 
+        NEW="$MAJOR.$MINOR.$PATCH"
         echo "Bumping to: $NEW"
-        mvn versions:set -DnewVersion=$NEW -DgenerateBackupPoms=false -f ./pom.xml
-        mvn versions:update-child-modules -DgenerateBackupPoms=false -f ./pom.xml
+
+        # Logica bump
+        if [ "${{ inputs.module }}" = "." ]; then
+          mvn versions:set -DnewVersion=$NEW -DgenerateBackupPoms=false -f ./pom.xml
+          mvn versions:update-child-modules -DgenerateBackupPoms=false -f ./pom.xml
+        else
+          mvn versions:set -DnewVersion=$NEW -DgenerateBackupPoms=false -f "$POM"
+        fi
 
         echo "NEW_VERSION=$NEW" >> $GITHUB_ENV
 
@@ -55,7 +70,7 @@ runs:
         if [ "${{ inputs.module }}" = "." ]; then
           git add pom.xml hello-service/pom.xml response-service/pom.xml
         else
-          git add pom.xml ${{ inputs.module }}/pom.xml
+          git add ${{ inputs.module }}/pom.xml
         fi
 
         git commit -m "chore: bump version to ${{ env.NEW_VERSION }}"
@@ -64,14 +79,9 @@ runs:
 
     - name: Build and deploy with Maven
       run: |
-        echo "Building module: ${{inputs.module}}"
+        echo "Building module: ${{ inputs.module }}"
         mvn -B clean deploy -DskipTests -s ${{ inputs.setting_maven }} -f ${{ inputs.module }}/pom.xml
       env:
         GITHUB_ACTOR: ${{ github.actor }}
-        GITHUB_TOKEN: ${{inputs.token}}
+        GITHUB_TOKEN: ${{ inputs.token }}
       shell: bash
-
-
-    
-
-        

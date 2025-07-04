@@ -5,11 +5,12 @@
 	<parent>
 		<groupId>com.example</groupId>
 		<artifactId>usvc-k8s</artifactId>
-		<version>0.1.1</version>
+		<version>0.1.0</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<groupId>com.example</groupId>
 	<artifactId>hello-service</artifactId>
+	<version>0.0.1</version>
 	<name>hello-service</name>
 	<description>Service that says hello</description>
 	<url/>
