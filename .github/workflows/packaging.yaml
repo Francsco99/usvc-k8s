@@ -19,9 +19,6 @@ on:
         type: string
         default: main
 
-env:
-  REPO: ${{ github.repository_owner }}/usvc-k8s
-
 jobs:
   packaging-single-module:
     name: Package single module
@@ -34,7 +31,7 @@ jobs:
       module: ${{ inputs.module }}
       artifact_id: ${{ inputs.module }}
       branch: ${{ inputs.branch }}
-      repository: ${{ env.REPO }}
+      repository: ${{ github.repository_owner }}/usvc-k8s
     secrets: inherit
 
   packaging-all-modules:
@@ -52,5 +49,5 @@ jobs:
       module: ${{ matrix.module }}
       artifact_id: ${{ matrix.module }}
       branch: ${{ inputs.branch }}
-      repository: ${{ env.REPO }}
+      repository: ${{ github.repository_owner }}/usvc-k8s
     secrets: inherit
