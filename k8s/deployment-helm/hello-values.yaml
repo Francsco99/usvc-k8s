@@ -1,8 +1,8 @@
 replicaCount: 2
 
 image:
-  repository: ghcr.io/francsco99/hello-service/hello-service
-  tag: "0.0.1-snapshot"
+  repository: ghcr.io/francsco99/hello-service
+  tag: "latest"
   pullPolicy: Always
 
 service:
