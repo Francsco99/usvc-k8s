@@ -27,20 +27,24 @@ runs:
       run: ls -la
       shell: bash
 
-    - name: Bump parent + child versions
-      id: bump
+    - name: Bump version
       run: |
-        OLD=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout -f ./pom.xml)
+        OLD=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout -f ./pom.xml | grep -E '^[0-9]')
         IFS='.' read -r MAJOR MINOR PATCH <<< "$OLD"
         case "${{ inputs.bump }}" in
           major) MAJOR=$((MAJOR+1)); MINOR=0; PATCH=0 ;;
           minor) MINOR=$((MINOR+1)); PATCH=0 ;;
           patch) PATCH=$((PATCH+1)) ;;
+          *) echo "Invalid bump"; exit 1 ;;
         esac
         NEW="$MAJOR.$MINOR.$PATCH"
+
+        echo "Bumping to: $NEW"
         mvn versions:set -DnewVersion=$NEW -DgenerateBackupPoms=false -f ./pom.xml
         mvn versions:update-child-modules -DgenerateBackupPoms=false -f ./pom.xml
+
         echo "NEW_VERSION=$NEW" >> $GITHUB_ENV
+
       shell: bash
 
     - name: Commit bumped version
