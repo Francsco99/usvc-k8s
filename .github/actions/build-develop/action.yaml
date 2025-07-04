@@ -55,7 +55,7 @@ runs:
         if [ "${{ inputs.module }}" = "." ]; then
           git add pom.xml hello-service/pom.xml response-service/pom.xml
         else
-          git add ${{ inputs.module }}/pom.xml
+          git add pom.xml ${{ inputs.module }}/pom.xml
         fi
 
         git commit -m "chore: bump version to ${{ env.NEW_VERSION }}"
